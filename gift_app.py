@@ -6,7 +6,7 @@ import time
 # --- 语言字典 ---
 MESSAGES = {
     "zh": {
-        "title": " 菲妮送礼参谋 ",
+        "title": "What To Gift  ",
         "caption": "送礼不用猜，AI 帮你选",
         "language_select": "Language / 语言",
         "select_relation": "对方是你的？",
@@ -19,15 +19,15 @@ MESSAGES = {
         "warning_hobbies": "请输入对方的爱好，让 AI 判断得更准！",
         "success_ai": "🎉 AI 已为您生成 3 个绝佳方案！",
         "reason": "💡 推荐理由：",
-        "search_link": "🛒 立即搜索购买",
-        "budget_options": ["¥200以内 (小心意)", "¥200 - ¥1000 (体面)", "¥1000 - ¥5000 (贵重)", "不差钱"],
+        "search_link": "",
+        "budget_options": ["200以内 (小心意)", "200 - 1000 (体面)", "1000 - 5000 (贵重)", "5000以上"],
         "relation_options": ["女朋友/老婆", "男朋友/老公", "父母/长辈", "好朋友", "领导/客户"],
         "footer_ai": "由 Gemini AI 驱动，提供实时个性化推荐。",
         "footer_no_ai": "请配置您的 Gemini API Key 以解锁 AI 推荐功能。",
     },
     "en": {
         "title": "What To Gift",
-        "caption": "AI will pick one for you",
+        "caption": "No Idea? AI will pick one for you",
         "language_select": "Language / 语言",
         "select_relation": "Who is the recipient?",
         "select_budget": "Budget Range",
@@ -193,5 +193,6 @@ if AI_READY:
     st.markdown(TEXT["footer_ai"])
 else:
     st.markdown(TEXT["footer_no_ai"])
+
 
 
