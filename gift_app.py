@@ -6,7 +6,7 @@ import time
 # --- 语言字典 ---
 MESSAGES = {
     "zh": {
-        "title": "🎁 心意管家 (Gift Guru)",
+        "title": " 菲妮送礼参谋 ",
         "caption": "基于 Gemini AI 的智能送礼参谋",
         "language_select": "Language / 语言",
         "select_relation": "对方是你的？",
@@ -26,7 +26,7 @@ MESSAGES = {
         "footer_no_ai": "请配置您的 Gemini API Key 以解锁 AI 推荐功能。",
     },
     "en": {
-        "title": "🎁 Gift Guru AI",
+        "title": "What To Gift",
         "caption": "Smart Gifting Consultant powered by Gemini AI",
         "language_select": "Language / 语言",
         "select_relation": "Who is the recipient?",
@@ -193,3 +193,4 @@ if AI_READY:
     st.markdown(TEXT["footer_ai"])
 else:
     st.markdown(TEXT["footer_no_ai"])
+
