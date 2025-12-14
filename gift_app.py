@@ -132,7 +132,22 @@ st.title("What To Gift")
 st.caption("送礼不用猜，AI 帮你选")
 
 st.markdown("---")
+# --- 语言选择器 ---
+# 默认语言设置为中文
+st.session_state['lang'] = st.session_state.get('lang', 'zh')
 
+# 用户选择语言
+lang_key = st.selectbox("Language / 语言", ["中文 (zh)", "English (en)"])
+st.session_state['lang'] = 'zh' if '中文' in lang_key else 'en'
+
+# 获取当前语言的文本
+TEXT = MESSAGES[st.session_state['lang']]
+
+# --- 3. 界面应用 TEXT 字典 ---
+st.title(TEXT["title"])
+st.caption(TEXT["caption"])
+
+# ... (以此类推，将所有 st.text_input, st.selectbox, st.button 等的文本替换为 TEXT[key])
 # 用户输入区
 col1, col2 = st.columns(2)
 
@@ -168,6 +183,7 @@ if AI_READY:
     st.markdown("")
 else:
     st.markdown("请配置您的 Gemini API Key 以解锁 AI 推荐功能。")
+
 
 
 
