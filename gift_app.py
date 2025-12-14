@@ -13,7 +13,7 @@ try:
     
     # 尝试从 Streamlit secrets 读取 API Key
     if "GEMINI_API_KEY" in st.secrets:
-        client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+        client = genai.Client(api_key=st.secrets["AIzaSyCpX_YyIRCvQSi0qJQSI9YW-L_Q8rX7d6o"])
         MODEL_NAME = "gemini-2.5-flash" # 适合快速响应的模型
         AI_READY = True
     else:
@@ -136,3 +136,4 @@ if AI_READY:
     st.markdown("当前版本由 Gemini AI 驱动，提供实时个性化推荐。")
 else:
     st.markdown("请配置您的 Gemini API Key 以解锁 AI 推荐功能。")
+
