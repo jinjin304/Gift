@@ -2,7 +2,39 @@ import streamlit as st
 import os
 import json
 import time
-
+# --- 语言字典 ---
+MESSAGES = {
+    "zh": {
+        "title": "🎁 心意管家 (Gift Guru)",
+        "caption": "基于 Gemini AI 的智能送礼参谋",
+        "select_relation": "对方是你的？",
+        "select_budget": "预算范围",
+        "input_occasion": "送礼场景？",
+        "input_hobbies": "对方有什么爱好/特点？",
+        "button_generate": "✨ 生成送礼方案",
+        "placeholder_occasion": "生日",
+        "placeholder_hobbies": "喜欢喝茶，对健康比较关注",
+        "warning_hobbies": "请输入对方的爱好，让 AI 判断得更准！",
+        "success_ai": "🎉 AI 已为您生成 3 个绝佳方案！",
+        "reason": "💡 推荐理由：",
+        "search_link": "🛒 立即搜索购买"
+    },
+    "en": {
+        "title": "🎁 Gift Guru AI",
+        "caption": "Smart Gifting Consultant powered by Gemini AI",
+        "select_relation": "Who is the recipient?",
+        "select_budget": "Budget Range",
+        "input_occasion": "Occasion?",
+        "input_hobbies": "Recipient's hobbies/characteristics?",
+        "button_generate": "✨ Generate Gift Ideas",
+        "placeholder_occasion": "Birthday",
+        "placeholder_hobbies": "Loves tea, interested in health and wellness",
+        "warning_hobbies": "Please enter the recipient's hobbies for better AI suggestions!",
+        "success_ai": "🎉 AI has generated 3 excellent ideas!",
+        "reason": "💡 Recommendation Reason:",
+        "search_link": "🛒 Search and Buy Now"
+    }
+}
 # --- 1. 页面配置 ---
 st.set_page_config(page_title="What To Gift", page_icon="🎁", layout="centered")
 
@@ -133,9 +165,10 @@ if st.button("✨ 生成送礼方案", use_container_width=True):
 
 st.markdown("---")
 if AI_READY:
-    st.markdown("当前版本由 Gemini AI 驱动，提供实时个性化推荐。")
+    st.markdown("")
 else:
     st.markdown("请配置您的 Gemini API Key 以解锁 AI 推荐功能。")
+
 
 
 
