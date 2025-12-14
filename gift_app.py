@@ -67,7 +67,17 @@ def get_ai_recommendations(relation, occasion, budget, hobbies):
         st.info("正在返回模拟结果...")
         time.sleep(1)
         return [{"item": "AI 正在思考中...", "reason": "请检查 Streamlit Secrets 中是否正确配置了 GEMINI_API_KEY。", "price": "无", "link": "#"}]
+    def get_ai_recommendations(relation, occasion, budget, hobbies):
+    # ... (前面的代码省略)
+    current_lang = st.session_state['lang']
     
+    # 在 Prompt 里明确要求 Gemini 使用当前选择的语言回答
+    prompt = f"""
+    你是一个送礼专家... (其他提示词)
+    ...
+    请严格使用 **{current_lang}** 语言返回所有字段的内容。
+    """
+    # ... (后面的 AI 调用代码省略)
     # 构建详细的 AI 提示词（Prompt）
     prompt = f"""
     你是一个专业且富有创意的送礼参谋。你的任务是根据用户的详细要求，推荐3个独一无二、贴心且具体的礼物方案。
@@ -183,6 +193,7 @@ if AI_READY:
     st.markdown("")
 else:
     st.markdown("请配置您的 Gemini API Key 以解锁 AI 推荐功能。")
+
 
 
 
