@@ -7,7 +7,7 @@ import time
 MESSAGES = {
     "zh": {
         "title": " 菲妮送礼参谋 ",
-        "caption": "基于 Gemini AI 的智能送礼参谋",
+        "caption": "送礼不用猜，AI 帮你选",
         "language_select": "Language / 语言",
         "select_relation": "对方是你的？",
         "select_budget": "预算范围",
@@ -27,7 +27,7 @@ MESSAGES = {
     },
     "en": {
         "title": "What To Gift",
-        "caption": "Smart Gifting Consultant powered by Gemini AI",
+        "caption": "AI will pick one for you",
         "language_select": "Language / 语言",
         "select_relation": "Who is the recipient?",
         "select_budget": "Budget Range",
@@ -193,4 +193,5 @@ if AI_READY:
     st.markdown(TEXT["footer_ai"])
 else:
     st.markdown(TEXT["footer_no_ai"])
+
 
