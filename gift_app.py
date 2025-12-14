@@ -4,7 +4,7 @@ import json
 import time
 
 # --- 1. 页面配置 ---
-st.set_page_config(page_title="心意管家 AI", page_icon="🎁", layout="centered")
+st.set_page_config(page_title="What To Gift", page_icon="🎁", layout="centered")
 
 # --- 2. 导入 Gemini 客户端（需要确保安装了 google-genai 库） ---
 try:
@@ -96,8 +96,8 @@ def get_ai_recommendations(relation, occasion, budget, hobbies):
 
 # --- 4. 软件界面 (UI) ---
 
-st.title("🎁 心意管家 (Gift Guru)")
-st.caption("基于 Gemini AI 的智能送礼参谋")
+st.title("What To Gift")
+st.caption("送礼不用猜，AI 帮你选)
 
 st.markdown("---")
 
@@ -136,5 +136,6 @@ if AI_READY:
     st.markdown("当前版本由 Gemini AI 驱动，提供实时个性化推荐。")
 else:
     st.markdown("请配置您的 Gemini API Key 以解锁 AI 推荐功能。")
+
 
 
