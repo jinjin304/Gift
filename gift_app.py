@@ -196,7 +196,7 @@ def get_ai_recommendations(relation, occasion, budget, hobbies):
 
     2. 'reason' (Recommendation reason, explain why the gift suits the occasion and person, max 100 characters in the target language)
 
-    3. 'price' (Estimated price range, e.g., '约 ¥500 - ¥800' or 'Approx $70 - $120')
+    3. 'price' (Estimated price range, e.g., '约 500 - 800' or 'Approx 70 - 120')
 
     4. 'link' (A REAL e-commerce search link, e.g., Taobao/JD search link, starting with https://)
 
@@ -373,4 +373,5 @@ if AI_READY:
 else:
 
     st.markdown(TEXT["footer_no_ai"])
+
 
