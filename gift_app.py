@@ -25,7 +25,7 @@ MESSAGES = {
         "success_ai": "🎉 AI 已为您生成 3 个绝佳方案！",
         "reason": "💡 推荐理由：",
         "search_link": "🛒 立即搜索购买",
-        "budget_options": ["200以内 (小心意)", "200 - 1000 (体面)", "1000 - 5000 (贵重)", "5000以上"],
+        "budget_options": ["200以内 ", "200 - 1000 ", "1000 - 5000 ", "5000以上"],
         # ** FIX: 关系选项再次细化 **
         "relation_options": [
             "女朋友", 
@@ -41,7 +41,7 @@ MESSAGES = {
             "领导",
             "客户"
         ],
-        "footer_ai": "由 Gemini AI 驱动，提供实时个性化推荐。",
+        "footer_ai": "由AI提供实时个性化推荐。",
         "footer_no_ai": "请配置您的 Gemini API Key 以解锁 AI 推荐功能。",
     },
     "en": {
@@ -59,7 +59,7 @@ MESSAGES = {
         "success_ai": "🎉 AI has generated 3 excellent ideas!",
         "reason": "💡 Recommendation Reason:",
         "search_link": "🛒 Search and Buy Now",
-        "budget_options": ["Under ¥200 (Small Token)", "¥200 - ¥1000 (Decent)", "¥1000 - ¥5000 (Valuable)", "No limit"],
+        "budget_options": ["Under 200 ", "200 - 1000 ", "1000 - 5000 ", "5000 above"],
         # ** FIX: 关系选项再次细化 **
         "relation_options": [
             "Girlfriend", 
@@ -75,7 +75,7 @@ MESSAGES = {
             "Boss/Supervisor",
             "Client"
         ],
-        "footer_ai": "Powered by Gemini AI, providing real-time personalized recommendations.",
+        "footer_ai": "Powered by AI, providing real time personalized recommendations.",
         "footer_no_ai": "Please configure your Gemini API Key to unlock AI features.",
     }
 }
@@ -84,7 +84,7 @@ MESSAGES = {
 
 # --- 1. 页面配置 ---
 
-st.set_page_config(page_title="心意管家 AI / Gift Guru", page_icon="🎁", layout="centered")
+st.set_page_config(page_title="What To Gift", page_icon="🎁", layout="centered")
 
 
 
@@ -373,3 +373,4 @@ if AI_READY:
 else:
 
     st.markdown(TEXT["footer_no_ai"])
+
