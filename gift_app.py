@@ -85,32 +85,50 @@ TEXT = MESSAGES[st.session_state['lang']]
 # 货币选择 (新增功能)
 currency = st.sidebar.selectbox(TEXT["currency_select"], ["CNY (¥)", "USD ($)", "MYR (RM)", "SGD ($)", "EUR (€)", "GBP (£)"])
 
-# --- 3. 核心 AI 推荐函数 ---
-def get_ai_recommendations(relation, occasion, budget, hobbies, selected_currency):
+# --- 1. 修改语言字典中的预算选项 (以美元为准) ---
+MESSAGES = {
+    "zh": {
+        # ... 其他配置保持不变
+        "select_budget": "预算范围 (以 USD 为基准)",
+        "budget_options": ["50 USD 以内", "50 - 200 USD", "200 - 500 USD", "500 USD 以上"],
+        "currency_label": "目标显示货币",
+        # ... 
+    },
+    "en": {
+        # ... 其他配置保持不变
+        "select_budget": "Budget Range (Based on USD)",
+        "budget_options": ["Under 50 USD", "50 - 200 USD", "200 - 500 USD", "Above 500 USD"],
+        "currency_label": "Display Currency",
+        # ...
+    }
+}
+
+# --- 2. 修改 AI 函数，加入换算逻辑 ---
+def get_ai_recommendations(relation, occasion, budget_usd_text, hobbies, target_currency):
     if not AI_READY:
-        st.info("正在返回模拟结果...")
-        time.sleep(1)
-        return [{"item": "AI 正在思考中...", "reason": "请检查 API Key 配置。", "price": "无", "link": "#"}]
+        return []
+
+    # 提取用户选中的美元数值 (简单的字符串处理)
+    # 例如从 "50 - 200 USD" 中提取出这个范围
     
     current_lang = st.session_state['lang']
     
-    # 提示词中加入了货币要求
     prompt = f"""
-    You are a professional gift consultant. Recommend 3 unique gift ideas.
-    IMPORTANT: All items must be real and purchasable.
-
-    User Input:
-    - Relationship: {relation}
+    You are a professional gift consultant. 
+    User Requirement:
+    - Recipient: {relation}
     - Occasion: {occasion}
-    - Budget: {budget}
+    - **Budget Base**: {budget_usd_text} (Reference in USD)
     - Hobbies: {hobbies}
-    - **Currency to use for price**: {selected_currency}
-
-    Rules:
-    1. Respond strictly in **{current_lang}**.
-    2. Provide price estimates in the selected currency: **{selected_currency}**.
-    3. Return ONLY a JSON object with a 'recommendations' list containing: 'item', 'reason', 'price', and 'link'.
+    
+    **CRITICAL INSTRUCTION**:
+    1. The user wants to see prices in **{target_currency}**. 
+    2. Please convert the USD budget range to **{target_currency}** using current rough exchange rates.
+    3. All recommended gift prices MUST be displayed in **{target_currency}**.
+    4. Respond strictly in **{current_lang}**.
     """
+    
+    # ... 后续的 config 和 client.models.generate_content 代码保持不变
 
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
@@ -181,3 +199,4 @@ if st.button(TEXT["button_generate"], use_container_width=True):
 
 st.markdown("---")
 st.markdown(TEXT["footer_ai"] if AI_READY else TEXT["footer_no_ai"])
+
