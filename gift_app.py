@@ -1,165 +1,127 @@
+# 文件名: app.py
 import streamlit as st
 import os
-import json
 import time
+from lang import STRINGS  # <--- 1. 导入刚才写的变量文件
 
-# --- 1. 语言字典 ---
-MESSAGES = {
-    "zh": {
-        "title": "What To Gift",
-        "caption": "送礼不用猜，AI 帮你选",
-        "language_select": "Language / 语言",
-        "currency_select": "目标显示货币 (Currency)",
-        "select_relation": "对方是你的？",
-        "select_budget": "预算金额",
-        "input_occasion": "送礼场景？",
-        "input_hobbies": "对方有什么爱好/特点？",
-        "button_generate": "✨ 生成送礼方案",
-        "placeholder_occasion": "例如：生日、周年纪念、乔迁",
-        "placeholder_hobbies": "例如：喜欢喝茶，关注健康，极简主义者",
-        "warning_input": "请输入完整的场景和爱好，让 AI 判断得更准！",
-        "success_ai": "🎉 AI 已为您生成 3 个绝佳方案！",
-        "reason": "💡 推荐理由：",
-        "search_link": "🛒 立即搜索购买",
-        "relation_options": [
-            "女朋友", "老婆", "男朋友", "老公", "父亲", "母亲", 
-            "爷爷", "奶奶", "好朋友 (男)", "好朋友 (女)", "领导", "客户"
-        ],
-        "footer_ai": "由 AI 提供实时个性化推荐。",
-        "footer_no_ai": "请配置您的 Gemini API Key 以解锁 AI 推荐功能。",
-    },
-    "en": {
-        "title": "What To Gift",
-        "caption": "No Idea? AI will pick one for you",
-        "language_select": "Language / 语言",
-        "currency_select": "Display Currency",
-        "select_relation": "Who is the recipient?",
-        "select_budget": "Budget Amount",
-        "input_occasion": "Occasion?",
-        "input_hobbies": "Recipient's hobbies/characteristics?",
-        "button_generate": "✨ Generate Gift Ideas",
-        "placeholder_occasion": "e.g. Birthday, Anniversary",
-        "placeholder_hobbies": "e.g. Loves tea, health-conscious, minimalist",
-        "warning_input": "Please enter both occasion and hobbies for better AI suggestions!",
-        "success_ai": "🎉 AI has generated 3 excellent ideas!",
-        "reason": "💡 Recommendation Reason:",
-        "search_link": "🛒 Search and Buy Now",
-        "relation_options": [
-            "Girlfriend", "Wife", "Boyfriend", "Husband", "Father", "Mother", 
-            "Grandfather", "Grandmother", "Close Friend (Male)", "Close Friend (Female)", 
-            "Boss/Supervisor", "Client"
-        ],
-        "footer_ai": "Powered by AI, providing real-time personalized recommendations.",
-        "footer_no_ai": "Please configure your Gemini API Key to unlock AI features.",
-    }
-}
-
-# --- 2. 页面配置 ---
+# --- 页面基础设置 ---
 st.set_page_config(page_title="What To Gift", page_icon="🎁", layout="centered")
 
-# 侧边栏初始化
-st.session_state['lang'] = st.session_state.get('lang', 'zh')
-lang_key = st.sidebar.selectbox(MESSAGES["zh"]["language_select"], ["中文 (zh)", "English (en)"])
-st.session_state['lang'] = 'zh' if '中文' in lang_key else 'en'
-TEXT = MESSAGES[st.session_state['lang']]
+# --- 初始化 Session State (记住用户的语言选择) ---
+if 'lang' not in st.session_state:
+    st.session_state['lang'] = 'zh'
 
-currency_choice = st.sidebar.selectbox(TEXT["currency_select"], ["USD ($)", "CNY (¥)", "MYR (RM)", "SGD ($)", "EUR (€)", "GBP (£)"])
-
-# --- 3. 导入 Gemini 客户端 ---
-try:
-    from google import genai
-    from google.genai import types
-    if "GEMINI_API_KEY" in st.secrets:
-        client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
-        MODEL_NAME = "gemini-2.0-flash" 
-        AI_READY = True
+# --- 侧边栏配置 ---
+with st.sidebar:
+    st.header("⚙️ Settings")
+    
+    # 语言切换器
+    lang_choice = st.selectbox("Language / 语言", ["中文 (zh)", "English (en)"])
+    if "English" in lang_choice:
+        st.session_state['lang'] = 'en'
     else:
-        st.warning("⚠️ API Key 未找到。软件将运行在模拟模式。")
-        AI_READY = False
-except Exception as e:
-    st.error(f"❌ 初始化失败: {e}")
-    AI_READY = False
-
-# --- 4. 核心 AI 推荐函数 ---
-def get_ai_recommendations(relation, occasion, budget_val, hobbies, target_currency):
-    if not AI_READY:
-        return [{"item": "模拟礼物", "reason": "请配置 API Key", "price": "0", "link": "#"}]
+        st.session_state['lang'] = 'zh'
     
-    current_lang = st.session_state['lang']
-    prompt = f"""
-    You are a professional gift consultant. Recommend 3 gift ideas.
-    Requirements:
-    - Recipient: {relation}
-    - Occasion: {occasion}
-    - Budget: {budget_val} {target_currency} 
-    - Hobbies: {hobbies}
-    Instructions:
-    1. Respond in {current_lang}.
-    2. Suggested gifts must fit the budget of {budget_val} {target_currency}.
-    3. Return JSON only with fields: 'item', 'reason', 'price', 'link'.
-    """
-
-    config = types.GenerateContentConfig(
-        response_mime_type="application/json",
-        response_schema={
-            "type": "object",
-            "properties": {
-                "recommendations": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "item": {"type": "string"},
-                            "reason": {"type": "string"},
-                            "price": {"type": "string"},
-                            "link": {"type": "string"}
-                        },
-                        "required": ["item", "reason", "price", "link"]
-                    }
-                }
-            }
-        },
-    )
+    # 获取当前语言的字典，赋值给 TEXT 变量
+    # 以后只要写 TEXT["key"] 就会自动变语言
+    TEXT = STRINGS[st.session_state['lang']]
     
-    with st.spinner('🤖 AI 正在为您挑选心意礼物...'):
-        # 针对 503 错误的重试逻辑
-        for i in range(3):
-            try:
-                response = client.models.generate_content(model=MODEL_NAME, contents=[prompt], config=config)
-                return json.loads(response.text).get('recommendations', [])
-            except Exception as e:
-                if "503" in str(e) and i < 2:
-                    time.sleep(3) # 遇到 503 等待 3 秒再试
-                    continue
-                st.error(f"AI 服务繁忙: {e}")
-                return []
-    return []
+    st.markdown("---")
+    
+    # 货币选择
+    currency = st.selectbox(TEXT["currency_select"], ["USD ($)", "CNY (¥)", "MYR (RM)", "SGD ($)", "EUR (€)"])
 
-# --- 5. 软件界面 (UI) ---
+# --- 主界面 ---
 st.title(TEXT["title"])
 st.caption(TEXT["caption"])
-st.markdown("---")
 
-col1, col2 = st.columns(2)
-with col1:
-    relation = st.selectbox(TEXT["select_relation"], TEXT["relation_options"])
-    budget_input = st.number_input(f"{TEXT['select_budget']} ({currency_choice})", min_value=0, value=100, step=10)
+# --- 表单区域 ---
+# 使用 st.form 可以避免每改一个字页面就刷新一次
+with st.form("gift_form"):
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # 使用变量 TEXT["select_relation"]
+        relation = st.selectbox(TEXT["select_relation"], TEXT["relation_options"])
+    
+    with col2:
+        budget = st.number_input(TEXT["select_budget"], min_value=0, value=100)
 
-with col2:
     occasion = st.text_input(TEXT["input_occasion"], placeholder=TEXT["placeholder_occasion"])
-    hobbies = st.text_input(TEXT["input_hobbies"], placeholder=TEXT["placeholder_hobbies"])
+    hobbies = st.text_area(TEXT["input_hobbies"], placeholder=TEXT["placeholder_hobbies"])
 
-if st.button(TEXT["button_generate"], use_container_width=True):
+    submitted = st.form_submit_button(TEXT["button_generate"])
+
+# --- AI 生成逻辑 ---
+if submitted:
     if not hobbies or not occasion:
-        st.warning(TEXT["warning_input"])
+        st.warning(TEXT["warning_hobbies"])
     else:
-        results = get_ai_recommendations(relation, occasion, budget_input, hobbies, currency_choice)
-        if results:
-            st.success(TEXT["success_ai"])
-            for i, res in enumerate(results):
-                with st.expander(f"🎁 {i+1}: {res.get('item')} ({res.get('price')})", expanded=True):
-                    st.write(f"**{TEXT['reason']}** {res.get('reason')}")
-                    st.markdown(f"[{TEXT['search_link']}]({res.get('link')})")
+        # 检查 API Key
+        if "GEMINI_API_KEY" not in st.secrets:
+            st.error(TEXT["error_api"])
+        else:
+            try:
+                # 只有点击按钮且校验通过后，才引用 AI 库，加快启动速度
+                from google import genai
+                from google.genai import types
+                
+                client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+                
+                with st.spinner("AI is thinking..."):
+                    # 这里的 Prompt 动态插入了用户当前选的语言
+                    sys_prompt = f"""
+                    You are a gift expert. 
+                    User Language: {st.session_state['lang']}
+                    Target Currency: {currency}
+                    
+                    Task: Recommend 3 specific gifts for a {relation} for {occasion}.
+                    Hobbies: {hobbies}.
+                    Budget: {budget} {currency}.
+                    
+                    Requirements:
+                    1. Output MUST be in JSON format.
+                    2. Use the language specified above ({st.session_state['lang']}) for all descriptions.
+                    3. JSON keys must be: 'item_name', 'reason', 'estimated_price'.
+                    """
+                    
+                    response = client.models.generate_content(
+                        model="gemini-2.0-flash",
+                        contents=sys_prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json",
+                            response_schema={
+                                "type": "object",
+                                "properties": {
+                                    "recommendations": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "item_name": {"type": "string"},
+                                                "reason": {"type": "string"},
+                                                "estimated_price": {"type": "string"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    )
+                    
+                    # --- 解析并显示结果 ---
+                    import json
+                    data = json.loads(response.text)
+                    
+                    st.success(TEXT["success_ai"])
+                    
+                    for gift in data["recommendations"]:
+                        with st.expander(f"🎁 {gift['item_name']}", expanded=True):
+                            st.write(f"**{TEXT['reason']}** {gift['reason']}")
+                            st.write(f"**{TEXT['price_label']}** {gift['estimated_price']}")
+                            # 生成 Google 搜索链接
+                            query = f"{gift['item_name']} buy"
+                            st.markdown(f"[{TEXT['search_link']}](https://www.google.com/search?q={query})")
 
-st.markdown("---")
-st.markdown(TEXT["footer_ai"] if AI_READY else TEXT["footer_no_ai"])
+            except Exception as e:
+                st.error(f"Error: {e}")
