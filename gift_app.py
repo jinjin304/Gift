@@ -22,14 +22,12 @@ with st.sidebar:
     else:
         st.session_state['lang'] = 'zh'
     
-    # 获取当前语言的字典，赋值给 TEXT 变量
-    # 以后只要写 TEXT["key"] 就会自动变语言
     TEXT = STRINGS[st.session_state['lang']]
     
     st.markdown("---")
     
-    # 货币选择
-    currency = st.selectbox(TEXT["currency_select"], ["USD ($)", "CNY (¥)", "MYR (RM)", "SGD ($)", "EUR (€)"])
+    # --- 修改处：添加了 PHP (₱) ---
+    currency = st.selectbox(TEXT["currency_select"], ["USD ($)", "CNY (¥)", "MYR (RM)", "SGD ($)", "EUR (€)", "PHP (₱)"])
 
 # --- 主界面 ---
 st.title(TEXT["title"])
@@ -125,3 +123,4 @@ if submitted:
 
             except Exception as e:
                 st.error(f"Error: {e}")
+
