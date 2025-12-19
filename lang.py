@@ -24,7 +24,7 @@ STRINGS = {
         # 注意：这里把选项也做了中文化
         "relation_options": [
             "女朋友", "老婆", "男朋友", "老公", "父亲", "母亲", 
-            "爷爷", "奶奶", "好朋友 (男)", "好朋友 (女)", "领导", "客户"
+            "爷爷", "奶奶", "兄弟", "姐妹", "好朋友 (男)", "好朋友 (女)", "领导", "客户"
         ]
     },
     "en": {
@@ -48,7 +48,7 @@ STRINGS = {
         "error_api": "Please configure API Key first.",
         "relation_options": [
             "Girlfriend", "Wife", "Boyfriend", "Husband", "Father", "Mother", 
-            "Grandfather", "Grandmother", "Close Friend (Male)", "Close Friend (Female)", 
+            "Grandfather", "Grandmother", "Brother", "Sister", "Close Friend (Male)", "Close Friend (Female)", 
             "Boss/Supervisor", "Client"
         ]
     }
