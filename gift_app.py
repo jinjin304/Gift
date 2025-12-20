@@ -83,8 +83,8 @@ if submitted:
                     3. JSON keys must be: 'item_name', 'reason', 'estimated_price'.
                     """
                     
-                    response = client.models.generate_content(
-                        model="gemini-1.5-flash",
+                    response = client.s.generate_content(
+                        model="gemini-2.0-flash",
                         contents=sys_prompt,
                         config=types.GenerateContentConfig(
                             response_mime_type="application/json",
@@ -123,5 +123,6 @@ if submitted:
 
             except Exception as e:
                 st.error(f"Error: {e}")
+
 
 
