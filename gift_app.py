@@ -34,12 +34,10 @@ st.title(TEXT["title"])
 st.caption(TEXT["caption"])
 
 # --- 表单区域 ---
-# 使用 st.form 可以避免每改一个字页面就刷新一次
 with st.form("gift_form"):
     col1, col2 = st.columns(2)
     
     with col1:
-        # 使用变量 TEXT["select_relation"]
         relation = st.selectbox(TEXT["select_relation"], TEXT["relation_options"])
     
     with col2:
@@ -60,14 +58,12 @@ if submitted:
             st.error(TEXT["error_api"])
         else:
             try:
-                # 只有点击按钮且校验通过后，才引用 AI 库，加快启动速度
                 from google import genai
                 from google.genai import types
                 
                 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
                 
                 with st.spinner("AI is thinking..."):
-                    # 这里的 Prompt 动态插入了用户当前选的语言
                     sys_prompt = f"""
                     You are a gift expert. 
                     User Language: {st.session_state['lang']}
@@ -83,8 +79,10 @@ if submitted:
                     3. JSON keys must be: 'item_name', 'reason', 'estimated_price'.
                     """
                     
+                    # --- 关键修正点 1: 去掉了多余的 .s ---
+                    # --- 关键修正点 2: 使用 gemini-2.0-flash-exp 获取更稳定的实验性配额 ---
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash",
+                        model="gemini-2.0-flash-exp",
                         contents=sys_prompt,
                         config=types.GenerateContentConfig(
                             response_mime_type="application/json",
@@ -117,15 +115,12 @@ if submitted:
                         with st.expander(f"🎁 {gift['item_name']}", expanded=True):
                             st.write(f"**{TEXT['reason']}** {gift['reason']}")
                             st.write(f"**{TEXT['price_label']}** {gift['estimated_price']}")
-                            # 生成 Google 搜索链接
                             query = f"{gift['item_name']} buy"
                             st.markdown(f"[{TEXT['search_link']}](https://www.google.com/search?q={query})")
 
             except Exception as e:
-                st.error(f"Error: {e}")
-
-
-
-
-
-
+                # 如果还是配额错误，给出更友好的提示
+                if "429" in str(e):
+                    st.error("请求太频繁啦，请等待约 20-30 秒后再试一次。")
+                else:
+                    st.error(f"Error: {e}")
